@@ -32,7 +32,7 @@ public abstract class Cage<T extends Animal> {
                 System.out.println("Тварину забрано з вольєру");
             }
             else {
-                throw new CustomException("Помилка: Тварини немає в вольєрі");
+                throw new CustomException("Помилка: Обраної тварини немає в вольєрі");
 
             }
 
