@@ -15,32 +15,67 @@ public class Worker {
         file.close();
         return list;
     }
-    public void Encrypt(String pathR, String pathW) throws IOException {
-       ///// Запис зашифрованого варіанту одного файлу в інший /////
-        FileInputStream inputStream = new FileInputStream(pathR); //поток читання байт з файлу
-        FileOutputStream outputStream = new FileOutputStream(pathW); //поток запису в файл
+
+
+    ArrayList<Byte> ReadFromFileByBytes(String path) throws IOException {
+        FileInputStream inputStream = new FileInputStream(path);
+//        ArrayList<Integer> dataList = new ArrayList<>();
+        ArrayList<Byte> dataList = new ArrayList<>();
         while (inputStream.available() > 0) //поки є непрочитанні байти
         {
-            //читання байту, виконання функції шиврування і запис в змінну дата
-            int data = Encryption(inputStream.read());
-            outputStream.write(data); // запис в другий потік
+            //читання байту
+//            dataList.add(inputStream.read());
+            dataList.add((byte)inputStream.read());
         }
-        inputStream.close(); //закриття обох потоків
+        inputStream.close();
+        return dataList;
+    }
+    void WriteInFileByBytes (String path, ArrayList<Byte> list) throws IOException {
+        FileOutputStream outputStream = new FileOutputStream(path);
+        for (Byte data: list ) {
+            outputStream.write(data);
+        }
         outputStream.close();
     }
-    public void Decrypt(String pathR, String pathW) throws IOException {
-        ///// Запис розшифрованого варіанту зашифрованого файлу в інший /////
-        FileInputStream inputStream = new FileInputStream(pathR);//поток читання байт з файлу
-        FileOutputStream outputStream = new FileOutputStream(pathW);//поток запису в файл
-        while (inputStream.available() > 0)  //поки є непрочитанні байти
-        {
-            //читання байту, виконання функції розшиврування і запис в змінну дата
-            int data = Decryption(inputStream.read());
-            outputStream.write(data); // запис в другий потік
-        }
-        inputStream.close();//закриття обох потоків
-        outputStream.close();
+    public void EncryptFile(String pathR, String pathW) throws IOException {
+        WriteInFileByBytes(pathW, Encrypt(ReadFromFileByBytes(pathR)));
     }
+    public void DecryptFile(String pathR, String pathW) throws IOException {
+
+        WriteInFileByBytes(pathW, Decrypt(ReadFromFileByBytes(pathR)));
+    }
+
+    ArrayList<Byte> Encrypt(ArrayList<Byte> input){
+        ArrayList<Byte> encList = new ArrayList<>();
+        for (Byte data: input) {
+            encList.add(Encryption(data));
+        }
+        return encList;
+    }
+    ArrayList<Byte> Decrypt(ArrayList<Byte> input){
+        ArrayList<Byte> encList = new ArrayList<>();
+        for (Byte data: input) {
+            encList.add(Decryption(data));
+        }
+        return encList;
+    }
+    public ArrayList<Byte> StringToListOfBytes(String str)
+    {
+        ArrayList<Byte> intList = new ArrayList<>();
+        char[] result = str.toCharArray();
+        for(char ch : result){
+            intList.add((byte)ch);
+        }
+        return intList;
+    }
+    public  String ListOfBytesToString(ArrayList<Byte> intList){
+        String str ="";
+        for (int data: intList ) {
+            str += (char)data;
+        }
+        return str;
+    }
+
     public void ReWriteFile(String path, String string){
         ////// перезапис файлу ///
         try (FileWriter writer = new FileWriter(path, false)) {
@@ -56,14 +91,16 @@ public class Worker {
             System.out.println(str);
         }
     }
-    int Encryption (int in)
+    Byte Encryption (Byte in)
     {
         /// Шифрування
-        return in + 3 ;
+        int i = in + 3;
+        return (byte)i;
     }
-    int Decryption (int in)
+    Byte Decryption (Byte in)
     {
         /// Розшифровування
-        return in - 3;
+        int i = in - 3;
+        return (byte)i;
     }
 }
