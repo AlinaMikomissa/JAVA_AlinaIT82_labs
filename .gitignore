@@ -1,0 +1,6 @@
+
+laba7java/target/classes/PiCounter.class
+laba7java/target/test-classes/PiCounterTest.class
+*.class
+*.xml
+*.iml
